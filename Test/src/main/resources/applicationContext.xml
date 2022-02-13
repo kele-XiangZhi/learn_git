@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.2.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+    
+    <bean id="Group123"
+          class="com.example.spring01.GroupC">
+        <property name="id" value="123" />
+        <property name="name" value="s123" />
+    </bean>
+    
+    <bean id="Group100"
+          class="com.example.spring01.GroupC">
+        <property name="id" value="100" />
+        <property name="name" value="KK100" />
+    </bean>
+
+    <!-- 使用xml的方式 声明嵌套的bean -->
+    <bean id="departmentB1" class="com.example.spring01.DepartmentB">
+        <property name="groupCs">
+            <list>
+                <ref bean="Group123" />
+                <ref bean="Group100" />
+            </list>
+        </property>
+    </bean>
+
+    <!-- contest 也就是需要初始化的bean的范围 里面包含了 bean的初始化策略 也就是beanid生成方式  注解的形式 -->
+    <context:component-scan base-package="com.example" />
+
+    <!-- xml的形式引入bean -->
+    <bean id="aop1" class="com.example.Aop.AOP1" />
+
+    <bean id="aop1" class="com.example.Aop.AOP2" />
+    
+    <!-- spring容器中那些配置@aspectJ切面的bean创建代理  也就是说堆切面中注解的类 去bean注入   -->
+    <aop:aspectj-autoproxy  />
+    
+    <aop:config>
+        <!-- 这里是aop的配置地方  也就是Spring框架会在初始化的时候 加载的一个默认配置。这里是配置的aop的拦截范围
+        格式如下： modifiers-pattern 类的范围 比如public   ret-type-parttern 返回的类型 declaring-type-patten 包路径
+        name-pattern 方法名 parm-patten 参数的路径  throw-pattern 异常的图
+    execution(modifiers-pattern? ret-type-pattern declaring-type-pattern? name-pattern(param-pattern)throws-pattern?)
+        通俗讲话：就是拦截哪些类
+            -->
+        <!-- 整个就是说 拦截哪些方法 他们之前和之后的执行什么。中间所有的符合执行的方法 都以point抽象代表 -->
+
+        <aop:pointcut expression="execution(* com.example.inter.*.*(..))" id="C1" /> <!--切点-->
+        <aop:aspect ref="aop1"> <!--切面 -->
+            <aop:around method="around" pointcut-ref="C1" />
+            <aop:before method="startTransaction" pointcut-ref="C1" /> <!--前置通知-->
+            <aop:after-returning method="commitTransaction" pointcut-ref="C1"/> <!--后置通知-->
+        </aop:aspect>
+    </aop:config>
+
+    <bean id="companyA" class="com.example.spring01.CompanyA"></bean>
+    
+    
+</beans>
