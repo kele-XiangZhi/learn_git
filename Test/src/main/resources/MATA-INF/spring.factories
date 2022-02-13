@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+2   com.example.test.TestStarterAutoConfiguration
