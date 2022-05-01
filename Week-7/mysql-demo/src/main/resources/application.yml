@@ -1,0 +1,115 @@
+# Tomcat 配置
+server:
+  port: 8080
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 10
+  servlet:
+    context-path: /
+    encoding:
+      enabled: true
+      force: true
+      charset: UTF-8
+
+# MyBatis 配置
+mybatis:
+  config-locations: classpath:mybatis-configuration.xml
+  mapper-locations: classpath:com/cncounter/mysqldemo/dao/mapper/*.xml
+  type-handlers-package: com.cncounter.mysqldemo.dao.mybatis.handlers.auto
+  configuration:
+    cache-enabled: false
+    lazy-loading-enabled: false
+    use-generated-keys: true
+    auto-mapping-behavior: full
+    default-executor-type: REUSE
+    default-statement-timeout: 20000
+    auto
+
+# Spring相关配置  但数据库的库的配置
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 5
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: MySQLHikariCP1
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.2.15:3306/mysql_demo?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: root
+
+#shardingSpere的分库分表联系
+#分为两个数据库  一个数据库ds0中根据插入数据的id进行分库，比如说根据id的数值进行取余数进行表数据的分欸数据库表 也就是分表
+#他的意义在一把一个而很大的表进行了拆分，从而降低了表的查询量，也可以根据比如班级不同进行分表。比如某个同学是A半就分配成绩到A般的表中
+#分库 是根据表的id分配给不同的数据库。比如说一个业务，每个业务中都有的订单。比如销售订单，给到销售的数据库，采购订单给到采购的数据库
+#spring:
+#  shardingsphere:
+#    datasource:
+#      names: ds0,ds1
+#      ds0:
+#        type:com.alibaba.druid.pool.DruidDataSource
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        url: jdbc:mysql://192.168.2.15:3316/mysql
+#        username: root
+#        password: 123456
+#      ds1:
+#        type: com.alibaba.druid.pool.DruidDataSource
+#          driver-class-name: com.mysql.cj.jdbc.Driver
+#          url: jdbc:mysql://192.168.2.15:3315/mysql
+#          username: root
+#          password: 123456
+#    sharding:
+#        tables:
+#          t_user:
+#            actual-data-nodes: ds0.t_user_$->{0..1}
+#            table-strategy:
+#              inline:
+#                sharding-column: user_id
+#                algorithm-expression: t_user_$->{user_id % 2}
+#          t_dept:
+#            actual-data-nodes: ds$->{0..1}.t_dept
+#            database-strategy:
+#              inline:
+#                sharding-column: dept_id
+#                algorithm-expression: ds$->{dept_id % 2}
+#    props:
+#      sql:
+#        show: true
+
+
+
+#spring:
+#  shardingsphere:
+#    datasource:
+#      names: master,slave0
+#      master:
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        url: jdbc:mysql://10.49.196.10:3306/itest
+#        username: admin
+#        password: Root_123!
+#      slave0:
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        url: jdbc:mysql://10.49.196.20:3306/itest
+#        username: admin
+#        password: Root_123!
+#    masterslave:
+#      name: ms
+#      master-data-source-name: master
+#      slave-data-source-names: slave0
+#    props:
+#      sql:
+#        show: true
+
+#  Logback日志级别配置
+logging.level.root: info
+logging.level.com.cncounter: debug
+logging.level.org.springframework.test.web.servlet.result: debug
+

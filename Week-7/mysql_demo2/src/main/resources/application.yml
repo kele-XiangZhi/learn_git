@@ -1,0 +1,59 @@
+#spring:
+#  shardingsphere:
+#    datasource:
+#      names: ds0,ds1 #数据源名称，多数据源以逗号分隔
+#      ds0:
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        url: jdbc:mysql://192.168.2.15:3316/mysql
+#        username: root
+#        password: 123456
+#      ds1:
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        url: jdbc:mysql://10.49.196.20:3315/mysql
+#        username: root
+#        password: 123456
+#    sharding:
+#      tables:
+#        t_user: #逻辑表名,在一个库里分表:ds0.t_user_0,ds0.t_user_1
+#          actual-data-nodes: ds0.t_user_$->{0..1}
+#          table-strategy: #表分片策略
+#            inline: #行表达式分片策略
+#              sharding-column: user_id #分片的字段
+#              algorithm-expression: t_user_$->{user_id % 2} #分片的算法
+#        t_dept: #分库,两个库里建系统的表:ds0.t_dept,ds1.t_dept
+#          actual-data-nodes: ds$->{0..1}.t_dept
+#          database-strategy: #数据库分片策略
+#            inline: #行表达式分片策略
+#              sharding-column: dept_id #分片的字段
+#              algorithm-expression: ds$->{dept_id % 2} #分片的算法
+#
+#    props:
+#      sql:
+#        show: true
+
+# 主从配置  属性文件配置的一组数据库关系
+spring:
+  shardingsphere:
+    datasource:
+      names: master,slave0
+      master:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://192.168.2.15:3303/mysql
+        username: root
+        password: 123456
+      slave0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://192.168.2.15:3306/mysql
+        username: root
+        password: 123456
+    masterslave:
+      name: ms
+      master-data-source-name: master
+      slave-data-source-names: slave0
+    props:
+      sql:
+        show: true
